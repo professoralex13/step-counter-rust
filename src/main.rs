@@ -4,16 +4,18 @@
 use embassy_executor::Spawner;
 use embassy_stm32::{
     Config,
+    adc::AdcChannel,
     gpio::{Input, Level, Output, Pull, Speed},
 };
 
-use crate::{blinky::blinky_task, buttons::buttons_task};
+use crate::{blinky::blinky_task, buttons::buttons_task, joystick::joystick_task};
 
 use {defmt_rtt as _, panic_probe as _};
 
 pub mod blinky;
 pub mod buttons;
 pub mod debouncer;
+pub mod joystick;
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
@@ -34,6 +36,15 @@ async fn main(spawner: Spawner) {
             button_left,
             button_right,
         ]))
+        .unwrap();
+
+    spawner
+        .spawn(joystick_task(
+            p.ADC1,
+            p.DMA1_CH1,
+            p.PC5.degrade_adc(),
+            p.PC4.degrade_adc(),
+        ))
         .unwrap();
 
     loop {}
