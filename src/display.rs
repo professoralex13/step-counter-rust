@@ -1,4 +1,3 @@
-use arrform::{ArrForm, arrform};
 use embassy_stm32::{
     i2c::{I2c, Master},
     mode::Blocking,
@@ -10,6 +9,7 @@ use embedded_graphics::{
     prelude::*,
     text::{Baseline, Text},
 };
+use heapless::format;
 use ssd1306::{
     I2CDisplayInterface, Ssd1306, mode::DisplayConfig, prelude::DisplayRotation,
     size::DisplaySize128x64,
@@ -63,16 +63,18 @@ pub async fn display_task(i2c: I2c<'static, Blocking, Master>) {
         let [x_state, y_state] = joystick_state.map(ValueState::from_ratio);
 
         let x_display = match x_state {
-            ValueState::Rest => arrform!(40, "Rest"),
-            ValueState::Low(value) => arrform!(40, "Up: {}%", (value * 100.0) as i32),
-            ValueState::High(value) => arrform!(40, "Down: {}%", (value * 100.0) as i32),
-        };
+            ValueState::Rest => format!(20; "Rest"),
+            ValueState::Low(value) => format!(20; "Up: {}%", (value * 100.0) as i32),
+            ValueState::High(value) => format!(20; "Down: {}%", (value * 100.0) as i32),
+        }
+        .unwrap();
 
         let y_display = match y_state {
-            ValueState::Rest => arrform!(20, "Rest"),
-            ValueState::Low(value) => arrform!(20, "Right: {}%", (value * 100.0) as i32),
-            ValueState::High(value) => arrform!(20, "Left: {}%", (value * 100.0) as i32),
-        };
+            ValueState::Rest => format!(20; "Rest"),
+            ValueState::Low(value) => format!(20; "Right: {}%", (value * 100.0) as i32),
+            ValueState::High(value) => format!(20; "Left: {}%", (value * 100.0) as i32),
+        }
+        .unwrap();
 
         Text::with_baseline(
             x_display.as_str(),
