@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+arrform = "0.1.1"
 cortex-m = "0.7.7"
 cortex-m-rt = "0.7.5"
 defmt = "1.0.1"
@@ -25,9 +26,11 @@ embassy-stm32 = { version = "0.5.0", features = [
 embassy-sync = { version = "0.7.2", features = ["defmt"] }
 
 embassy-time = { version = "0.5.0", features = ["defmt"] }
+embedded-graphics = "0.8.2"
 embedded-hal = "1.0.0"
 embedded-hal-bus = "0.3.0"
 panic-probe = { version = "1.0.0", features = ["defmt"] }
+ssd1306 = "0.10.0"
 
 [package.metadata.embassy]
 build = [{ target = "thumbv6m-none-eabi", artifact-dir = "out/stm32-rs" }]

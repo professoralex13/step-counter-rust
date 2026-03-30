@@ -6,6 +6,6 @@ pub async fn blinky_task(mut pin: Output<'static>) {
     loop {
         pin.toggle();
 
-        Timer::after_secs(1).await;
+        Timer::after_millis(500).await;
     }
 }

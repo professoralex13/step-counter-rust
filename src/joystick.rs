@@ -7,6 +7,7 @@ use embassy_sync::{
     blocking_mutex::raw::CriticalSectionRawMutex,
     watch::{Receiver, Watch},
 };
+use embassy_time::{Duration, Timer};
 
 static JOYSTICK_VALUES: Watch<CriticalSectionRawMutex, [f32; 2], 2> = Watch::new();
 
@@ -19,11 +20,11 @@ const JOYSTICK_LOW: u16 = 370;
 
 fn transform_raw(raw: u16) -> f32 {
     if raw < JOYSTICK_LOW {
-        0.0
+        -1.0
     } else if raw > JOYSTICK_HIGH {
         1.0
     } else {
-        f32::from(raw - JOYSTICK_LOW) / f32::from(JOYSTICK_HIGH - JOYSTICK_LOW)
+        2.0 * (f32::from(raw - JOYSTICK_LOW) / f32::from(JOYSTICK_HIGH - JOYSTICK_LOW)) - 1.0
     }
 }
 
@@ -53,5 +54,7 @@ pub async fn joystick_task(
         .await;
 
         sender.send(measurements.map(transform_raw));
+
+        Timer::after(Duration::from_hz(50)).await;
     }
 }

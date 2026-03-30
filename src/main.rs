@@ -1,20 +1,24 @@
 #![no_std]
 #![no_main]
 
+use defmt_rtt as _;
 use embassy_executor::Spawner;
 use embassy_stm32::{
     Config,
     adc::AdcChannel,
     gpio::{Input, Level, Output, Pull, Speed},
+    i2c::{self, I2c},
 };
+use panic_probe as _;
 
-use crate::{blinky::blinky_task, buttons::buttons_task, joystick::joystick_task};
-
-use {defmt_rtt as _, panic_probe as _};
+use crate::{
+    blinky::blinky_task, buttons::buttons_task, display::display_task, joystick::joystick_task,
+};
 
 pub mod blinky;
 pub mod buttons;
 pub mod debouncer;
+pub mod display;
 pub mod joystick;
 
 #[embassy_executor::main]
@@ -46,6 +50,10 @@ async fn main(spawner: Spawner) {
             p.PC4.degrade_adc(),
         ))
         .unwrap();
+
+    let i2c = I2c::new_blocking(p.I2C1, p.PB8, p.PB9, i2c::Config::default());
+
+    spawner.spawn(display_task(i2c)).unwrap();
 
     loop {}
 }
