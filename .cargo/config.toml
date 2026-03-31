@@ -1,8 +1,8 @@
-[target.thumbv6m-none-eabi] # <-change for your platform
-runner = 'probe-rs run --chip STM32C071rb' # <- change for your chip
+[target.thumbv6m-none-eabi]
+runner = 'probe-rs run --chip STM32C071rb'
 
 [build]
-target = "thumbv6m-none-eabi" # <-change for your platform
+target = "thumbv6m-none-eabi"
 
 [env]
-DEFMT_LOG = "trace" # <- can change to info, warn, or error
+DEFMT_LOG = "info"
