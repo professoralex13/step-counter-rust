@@ -40,15 +40,15 @@ async fn main(spawner: Spawner) {
     spawner.spawn(blinky_task(led)).unwrap();
 
     // Buttons task setup
-    let button_down = Input::new(p.PC1, Pull::Down);
     let button_up = Input::new(p.PC11, Pull::Down);
-    let button_right = Input::new(p.PC10, Pull::Down);
+    let button_down = Input::new(p.PC1, Pull::Down);
     let button_left = Input::new(p.PC13, Pull::Up);
+    let button_right = Input::new(p.PC10, Pull::Down);
 
     spawner
         .spawn(buttons_task([
-            button_down,
             button_up,
+            button_down,
             button_left,
             button_right,
         ]))

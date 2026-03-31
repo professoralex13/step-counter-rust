@@ -43,25 +43,25 @@ impl<T: PartialEq> Debouncer<T> {
     pub fn just_changed(&self) -> bool {
         self.has_changed
     }
-
-    pub fn just_changed_to(&self, value: &T) -> bool {
-        self.has_changed && &self.state == value
-    }
 }
 
 pub struct DebouncedButton {
     pin: Input<'static>,
 
     debouncer: Debouncer<Level>,
+
+    active_high: bool,
 }
 
 impl DebouncedButton {
-    pub fn new(pin: Input<'static>) -> Self {
+    pub fn new(pin: Input<'static>, active_high: bool) -> Self {
         let initial_level = pin.get_level();
 
         Self {
             pin,
             debouncer: Debouncer::new(initial_level, 5),
+
+            active_high,
         }
     }
 
@@ -69,15 +69,15 @@ impl DebouncedButton {
         self.debouncer.poll(self.pin.get_level())
     }
 
-    pub fn get_level(&self) -> Level {
-        *self.debouncer.state()
+    pub fn get_value(&self) -> bool {
+        self.active_high != bool::from(*self.debouncer.state())
     }
 
     pub fn just_changed(&self) -> bool {
         self.debouncer.just_changed()
     }
 
-    pub fn just_changed_to(&self, level: Level) -> bool {
-        self.debouncer.just_changed_to(&level)
+    pub fn just_changed_to(&self, value: bool) -> bool {
+        self.debouncer.just_changed() && self.get_value() == value
     }
 }
