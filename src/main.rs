@@ -7,8 +7,9 @@ use embassy_stm32::{
     Config,
     adc::AdcChannel,
     gpio::{Input, Level, Output, Pull, Speed},
-    i2c::{self, I2c},
+    i2c::I2c,
 };
+use embassy_time::Timer;
 use panic_probe as _;
 
 use crate::{
@@ -51,9 +52,11 @@ async fn main(spawner: Spawner) {
         ))
         .unwrap();
 
-    let i2c = I2c::new_blocking(p.I2C1, p.PB8, p.PB9, i2c::Config::default());
+    let i2c = I2c::new_blocking(p.I2C1, p.PB8, p.PB9, Default::default());
 
     spawner.spawn(display_task(i2c)).unwrap();
 
-    loop {}
+    loop {
+        Timer::after_millis(50).await;
+    }
 }

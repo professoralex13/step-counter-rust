@@ -1,6 +1,7 @@
 use embassy_stm32::{
     Peri,
     adc::{Adc, AnyAdcChannel, Resolution, SampleTime},
+    bind_interrupts, dma,
     peripherals::{ADC1, DMA1_CH1},
 };
 use embassy_sync::{
@@ -28,6 +29,10 @@ fn transform_raw(raw: u16) -> f32 {
     }
 }
 
+bind_interrupts!(struct Irqs {
+    DMA1_CHANNEL1 => dma::InterruptHandler<DMA1_CH1>;
+});
+
 #[embassy_executor::task]
 pub async fn joystick_task(
     adc: Peri<'static, ADC1>,
@@ -44,9 +49,10 @@ pub async fn joystick_task(
 
         adc.read(
             dma.reborrow(),
+            Irqs,
             [
-                (&mut x_pin, SampleTime::CYCLES640_5),
-                (&mut y_pin, SampleTime::CYCLES640_5),
+                (&mut x_pin, SampleTime::CYCLES2_5),
+                (&mut y_pin, SampleTime::CYCLES2_5),
             ]
             .into_iter(),
             &mut measurements,

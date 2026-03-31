@@ -96,6 +96,6 @@ pub async fn display_task(i2c: I2c<'static, Blocking, Master>) {
 
         display.flush().unwrap();
 
-        Timer::after(Duration::from_hz(4)).await;
+        Timer::after(Duration::from_hz(10)).await;
     }
 }

@@ -1,5 +1,5 @@
 [target.thumbv6m-none-eabi] # <-change for your platform
-runner = 'probe-rs run --chip STM32C071' # <- change for your chip
+runner = 'probe-rs run --chip STM32C071rb' # <- change for your chip
 
 [build]
 target = "thumbv6m-none-eabi" # <-change for your platform
