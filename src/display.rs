@@ -1,6 +1,6 @@
 use embassy_stm32::{
     i2c::{I2c, Master},
-    mode::Blocking,
+    mode::Async,
 };
 use embassy_time::{Duration, Timer};
 use embedded_graphics::{
@@ -40,7 +40,7 @@ impl ValueState {
 }
 
 #[embassy_executor::task]
-pub async fn display_task(i2c: I2c<'static, Blocking, Master>) {
+pub async fn display_task(i2c: I2c<'static, Async, Master>) {
     let interface = I2CDisplayInterface::new(i2c);
 
     let mut display = Ssd1306::new(interface, DisplaySize128x64, DisplayRotation::Rotate0)

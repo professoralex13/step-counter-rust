@@ -6,8 +6,10 @@ use embassy_executor::Spawner;
 use embassy_stm32::{
     Config,
     adc::AdcChannel,
+    bind_interrupts, dma,
     gpio::{Input, Level, Output, Pull, Speed},
-    i2c::I2c,
+    i2c::{self, I2c},
+    peripherals::{self, DMA1_CH2, DMA1_CH3},
 };
 use embassy_time::Timer;
 use panic_probe as _;
@@ -21,6 +23,11 @@ pub mod buttons;
 pub mod debouncer;
 pub mod display;
 pub mod joystick;
+
+bind_interrupts!(struct Irqs {
+    I2C1 => i2c::EventInterruptHandler<peripherals::I2C1>, i2c::ErrorInterruptHandler<peripherals::I2C1>;
+    DMA1_CHANNEL2_3 => dma::InterruptHandler<DMA1_CH2>, dma::InterruptHandler<DMA1_CH3>;
+});
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
@@ -52,7 +59,15 @@ async fn main(spawner: Spawner) {
         ))
         .unwrap();
 
-    let i2c = I2c::new_blocking(p.I2C1, p.PB8, p.PB9, Default::default());
+    let i2c = I2c::new(
+        p.I2C1,
+        p.PB8,
+        p.PB9,
+        p.DMA1_CH2,
+        p.DMA1_CH3,
+        Irqs,
+        Default::default(),
+    );
 
     spawner.spawn(display_task(i2c)).unwrap();
 
