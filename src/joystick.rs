@@ -61,6 +61,6 @@ pub async fn joystick_task(
 
         sender.send(measurements.map(transform_raw));
 
-        Timer::after(Duration::from_hz(50)).await;
+        Timer::after(Duration::from_hz(10)).await;
     }
 }

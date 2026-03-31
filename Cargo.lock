@@ -934,6 +934,7 @@ dependencies = [
  "display-interface-spi",
  "embedded-graphics-core",
  "embedded-hal 1.0.0",
+ "embedded-hal-async",
  "maybe-async-cfg",
 ]
 
@@ -975,6 +976,7 @@ version = "0.1.0"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
+ "critical-section",
  "defmt 1.0.1",
  "defmt-rtt",
  "embassy-executor",

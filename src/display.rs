@@ -10,10 +10,7 @@ use embedded_graphics::{
     text::{Baseline, Text},
 };
 use heapless::format;
-use ssd1306::{
-    I2CDisplayInterface, Ssd1306, mode::DisplayConfig, prelude::DisplayRotation,
-    size::DisplaySize128x64,
-};
+use ssd1306::{I2CDisplayInterface, Ssd1306Async, prelude::*};
 
 use crate::joystick::get_joystick_receiver;
 
@@ -43,10 +40,8 @@ impl ValueState {
 pub async fn display_task(i2c: I2c<'static, Async, Master>) {
     let interface = I2CDisplayInterface::new(i2c);
 
-    let mut display = Ssd1306::new(interface, DisplaySize128x64, DisplayRotation::Rotate0)
+    let mut display = Ssd1306Async::new(interface, DisplaySize128x64, DisplayRotation::Rotate0)
         .into_buffered_graphics_mode();
-
-    display.init().unwrap();
 
     let text_style = MonoTextStyleBuilder::new()
         .font(&FONT_6X10)
@@ -94,7 +89,7 @@ pub async fn display_task(i2c: I2c<'static, Async, Master>) {
         .draw(&mut display)
         .unwrap();
 
-        display.flush().unwrap();
+        display.flush().await.unwrap();
 
         Timer::after(Duration::from_hz(10)).await;
     }
